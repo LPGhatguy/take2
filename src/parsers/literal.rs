@@ -1,13 +1,11 @@
 use traits::*;
 
-pub struct MatchLiteral<'a> {
+pub struct ParseLiteral<'a> {
 	literal: &'a str,
 }
 
-impl<'a> Parser<'a> for MatchLiteral<'a> {
-	type Value = &'a str;
-
-	fn parse(&self, source: &'a str) -> Option<(Self::Value, &'a str)> {
+impl<'a> Parser<'a, &'a str> for ParseLiteral<'a> {
+	fn parse(&self, source: &'a str) -> Option<(&'a str, &'a str)> {
 		let zip = source.char_indices().zip(self.literal.chars());
 
 		for ((_, source_char), literal_char) in zip {
@@ -20,20 +18,16 @@ impl<'a> Parser<'a> for MatchLiteral<'a> {
 	}
 }
 
-impl<'a> MatchLiteral<'a> {
-	pub fn new(literal: &'a str) -> MatchLiteral<'a> {
-		MatchLiteral {
-			literal,
-		}
+pub fn literal<'a>(literal: &'a str) -> ParseLiteral<'a> {
+	ParseLiteral {
+		literal,
 	}
 }
 
 #[test]
 fn it_matches_literal() {
-	let source = "hello, world!";
-	let parser = MatchLiteral::new("hello");
-
-	let result = parser.parse(source);
+	let parser = literal("hello");
+	let result = parser.parse("hello, world!");
 
 	assert!(result.is_some());
 
@@ -41,4 +35,12 @@ fn it_matches_literal() {
 
 	assert!(value == "hello");
 	assert!(rest == ", world!");
+}
+
+#[test]
+fn it_fails_no_literal() {
+	let parser = literal("world!");
+	let result = parser.parse("hello, world!");
+
+	assert!(result.is_none());
 }

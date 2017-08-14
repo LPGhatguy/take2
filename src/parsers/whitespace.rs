@@ -2,10 +2,8 @@ use traits::*;
 
 pub struct ParseWhitespace;
 
-impl<'a> Parser<'a> for ParseWhitespace {
-	type Value = &'a str;
-
-	fn parse(&self, source: &'a str) -> Option<(Self::Value, &'a str)> {
+impl<'a> Parser<'a, &'a str> for ParseWhitespace {
+	fn parse(&self, source: &'a str) -> Option<(&'a str, &'a str)> {
 		let mut start_pos = 0;
 
 		for (pos, char) in source.char_indices() {
@@ -18,22 +16,22 @@ impl<'a> Parser<'a> for ParseWhitespace {
 			}
 		}
 
+		if start_pos == 0 {
+			return None;
+		}
+
 		return Some((&source[0..start_pos], &source[start_pos..]));
 	}
 }
 
-impl ParseWhitespace {
-	pub fn new() -> ParseWhitespace {
-		ParseWhitespace {}
-	}
+pub fn whitespace() -> ParseWhitespace {
+	ParseWhitespace
 }
 
 #[test]
 fn it_matches_whitespace() {
-	let source = "  test";
-
-	let parser = ParseWhitespace::new();
-	let result = parser.parse(source);
+	let parser = whitespace();
+	let result = parser.parse("  test");
 
 	assert!(result.is_some());
 
@@ -41,4 +39,12 @@ fn it_matches_whitespace() {
 
 	assert!(value == "  ");
 	assert!(rest == "test");
+}
+
+#[test]
+fn it_fails_no_whitespace() {
+	let parser = whitespace();
+	let result = parser.parse("hello, world!");
+
+	assert!(result.is_none());
 }
