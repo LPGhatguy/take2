@@ -2,8 +2,8 @@ use traits::*;
 
 pub struct ParseWhitespace;
 
-impl<'a> Parser<'a, &'a str> for ParseWhitespace {
-	fn parse(&self, source: &'a str) -> Option<(&'a str, &'a str)> {
+impl<'result> Parser<&'result str> for ParseWhitespace {
+	fn parse<'rest>(&self, source: &'rest str) -> Option<(&'rest str, &'rest str)> {
 		let mut start_pos = 0;
 
 		for (pos, char) in source.char_indices() {

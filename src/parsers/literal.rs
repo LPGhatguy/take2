@@ -1,11 +1,11 @@
 use traits::*;
 
-pub struct ParseLiteral<'a> {
-	literal: &'a str,
+pub struct ParseLiteral<'internal> {
+	literal: &'internal str,
 }
 
-impl<'a> Parser<'a, &'a str> for ParseLiteral<'a> {
-	fn parse(&self, source: &'a str) -> Option<(&'a str, &'a str)> {
+impl<'internal> Parser<&'internal str> for ParseLiteral<'internal> {
+	fn parse<'rest>(&self, source: &'rest str) -> Option<(&'internal str, &'rest str)> {
 		let zip = source.char_indices().zip(self.literal.chars());
 
 		for ((_, source_char), literal_char) in zip {
@@ -18,7 +18,7 @@ impl<'a> Parser<'a, &'a str> for ParseLiteral<'a> {
 	}
 }
 
-pub fn literal<'a>(literal: &'a str) -> ParseLiteral<'a> {
+pub fn literal<'internal>(literal: &'internal str) -> ParseLiteral<'internal> {
 	ParseLiteral {
 		literal,
 	}
