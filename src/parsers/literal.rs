@@ -4,8 +4,8 @@ pub struct ParseLiteral<'internal> {
 	literal: &'internal str,
 }
 
-impl<'internal> Parser<&'internal str> for ParseLiteral<'internal> {
-	fn parse<'rest>(&self, source: &'rest str) -> Option<(&'internal str, &'rest str)> {
+impl<'internal, 'rest> Parser<'rest, &'internal str> for ParseLiteral<'internal> {
+	fn parse(&self, source: &'rest str) -> Option<(&'internal str, &'rest str)> {
 		let zip = source.char_indices().zip(self.literal.chars());
 
 		for ((_, source_char), literal_char) in zip {

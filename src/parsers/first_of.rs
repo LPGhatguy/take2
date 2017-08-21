@@ -1,11 +1,11 @@
 use traits::*;
 
-pub struct ParseFirstOf<SubValue> {
-	parsers: Vec<Box<Parser<SubValue>>>,
+pub struct ParseFirstOf<'rest, SubValue> {
+	parsers: Vec<Box<Parser<'rest, SubValue>>>,
 }
 
-impl<SubValue> Parser<SubValue> for ParseFirstOf<SubValue> {
-	fn parse<'rest>(&self, source: &'rest str) -> Option<(SubValue, &'rest str)> {
+impl<'rest, SubValue> Parser<'rest, SubValue> for ParseFirstOf<'rest, SubValue> {
+	fn parse(&self, source: &'rest str) -> Option<(SubValue, &'rest str)> {
 		for parser in &self.parsers {
 			match parser.parse(source) {
 				v@Some(_) => {
@@ -19,7 +19,7 @@ impl<SubValue> Parser<SubValue> for ParseFirstOf<SubValue> {
 	}
 }
 
-pub fn first_of<SubValue>(parsers: Vec<Box<Parser<SubValue>>>) -> ParseFirstOf<SubValue> {
+pub fn first_of<'rest, SubValue>(parsers: Vec<Box<Parser<'rest, SubValue>>>) -> ParseFirstOf<'rest, SubValue> {
 	ParseFirstOf {
 		parsers,
 	}

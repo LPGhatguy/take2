@@ -1,3 +1,3 @@
-pub trait Parser<Value> {
-	fn parse<'a>(&self, source: &'a str) -> Option<(Value, &'a str)>;
+pub trait Parser<'rest, Value> {
+	fn parse(&self, source: &'rest str) -> Option<(Value, &'rest str)>;
 }

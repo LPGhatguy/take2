@@ -13,7 +13,7 @@ enum JsonValue {
 
 struct JsonParser;
 
-impl<'a, JsonValue> Parser<'a, JsonValue> for JsonParser {
+impl<'a> Parser<'a, JsonValue> for JsonParser {
 	fn parse(&self, source: &'a str) -> Option<(JsonValue, &'a str)> {
 		None
 	}
@@ -24,10 +24,7 @@ fn json() -> JsonParser {
 }
 
 fn main() {
-	let parser = json();
-
-	// I want lifetime elision here; refactoring lifetimes now.
-	let result: Option<(JsonValue, &'static str)> = parser.parse(TEST_JSON);
+	let result = json().parse(TEST_JSON);
 
 	println!("{:?}", result);
 }

@@ -6,10 +6,10 @@ pub struct ParseMaybe<SubParser, SubValue> {
 	sub_parser: SubParser,
 }
 
-impl<SubParser, SubValue> Parser<Option<SubValue>> for ParseMaybe<SubParser, SubValue> where
-	SubParser: Parser<SubValue> {
+impl<'rest, SubParser, SubValue> Parser<'rest, Option<SubValue>> for ParseMaybe<SubParser, SubValue> where
+	SubParser: Parser<'rest, SubValue> {
 
-	fn parse<'a>(&self, source: &'a str) -> Option<(Option<SubValue>, &'a str)> {
+	fn parse(&self, source: &'rest str) -> Option<(Option<SubValue>, &'rest str)> {
 		match self.sub_parser.parse(source) {
 			Some((value, rest)) => Some((Some(value), rest)),
 			None => Some((None, source)),
@@ -17,8 +17,8 @@ impl<SubParser, SubValue> Parser<Option<SubValue>> for ParseMaybe<SubParser, Sub
 	}
 }
 
-pub fn maybe<SubParser, SubValue>(sub_parser: SubParser) -> ParseMaybe<SubParser, SubValue>
-	where SubParser: Parser<SubValue> {
+pub fn maybe<'rest, SubParser, SubValue>(sub_parser: SubParser) -> ParseMaybe<SubParser, SubValue>
+	where SubParser: Parser<'rest, SubValue> {
 	ParseMaybe {
 		sub_parser,
 		marker: PhantomData,
