@@ -7,20 +7,21 @@ pub struct ParseInsideBalanced {
 
 impl<'rest> Parser<'rest, &'rest str> for ParseInsideBalanced {
 	fn parse(&self, source: &'rest str) -> Option<(&'rest str, &'rest str)> {
-		let mut start_pos = 0;
-		let mut end_pos = 0;
-
 		let mut iter = source.char_indices();
 
-		if let Some((_, first_char)) = iter.next() {
-			if first_char != self.start {
+		let start_pos = {
+			if let Some((_, first_char)) = iter.next() {
+				if first_char != self.start {
+					return None;
+				}
+
+				first_char.len_utf8()
+			} else {
 				return None;
 			}
+		};
 
-			start_pos = first_char.len_utf8();
-		} else {
-			return None;
-		}
+		let mut end_pos = 0;
 
 		for (pos, char) in iter {
 			end_pos = pos;
