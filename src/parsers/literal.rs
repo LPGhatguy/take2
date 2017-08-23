@@ -1,11 +1,7 @@
 pub fn literal<'rest>(literal: &'rest str) -> impl Fn(&'rest str) -> Option<(&'rest str, &'rest str)> {
 	move |source: &'rest str| {
-		let zip = source.char_indices().zip(literal.chars());
-
-		for ((_, source_char), literal_char) in zip {
-			if source_char != literal_char {
-				return None;
-			}
+		if !source.starts_with(literal) {
+			return None;
 		}
 
 		Some((literal, &source[literal.len()..]))
@@ -29,6 +25,14 @@ fn it_matches_literal() {
 fn it_fails_no_literal() {
 	let parser = literal("world!");
 	let result = parser("hello, world!");
+
+	assert!(result.is_none());
+}
+
+#[test]
+fn it_fails_end_of_string() {
+	let parser = literal("a");
+	let result = parser("");
 
 	assert!(result.is_none());
 }
