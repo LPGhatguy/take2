@@ -1,5 +1,5 @@
+#![feature(conservative_impl_trait)]
+
 mod parsers;
-mod traits;
 
 pub use parsers::*;
-pub use traits::*;
